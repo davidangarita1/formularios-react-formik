@@ -36,37 +36,32 @@ const Formulario = () => {
 					setTimeout(() => setFormularioEnviado(false), 5000);
 				}}
 			>
-				{({ values, errors, touched, handleSubmit, handleChange, handleBlur }) => (
-					<form className='formulario' onSubmit={handleSubmit}>
+				{/* { values, errors, touched, handleSubmit, handleChange, handleBlur } */}
+				{({errors}) => (
+					<Form className='formulario'>
 						<div>
 							<label htmlFor='nombre'>Nombre</label>
-							<input
+							<Field
 								type='text'
 								id='nombre'
 								name='nombre'
 								placeholder='John Doe'
-								value={values.nombre}
-								onChange={handleChange}
-								onBlur={handleBlur}
 							/>
-							{touched.nombre && errors.nombre && <div className='error'>{errors.nombre}</div>}
+							<ErrorMessage name='nombre' component={() => {<div className='error'>{errors.nombre}</div>}} />
 						</div>
 						<div>
 							<label htmlFor='correo'>Correo</label>
-							<input
+							<Field
 								type='text'
 								id='correo'
 								name='correo'
 								placeholder='correo@correo.com'
-								value={values.correo}
-								onChange={handleChange}
-								onBlur={handleBlur}
 							/>
-							{touched.correo && errors.correo && <div className='error'>{errors.correo}</div>}
+							<ErrorMessage name='correo' component={() => {<div className='error'>{errors.correo}</div>}} />
 						</div>
 						<button type='submit'>Enviar</button>
 						{formularioEnviado && <p className='exito'>Formulario enviado con exito!</p>}
-					</form>
+					</Form>
 				)}
 			</Formik>
 		</>
