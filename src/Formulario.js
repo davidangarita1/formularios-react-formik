@@ -1,60 +1,76 @@
 import React, {useState} from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const Formulario = () => {
-	const [inputNombre, cambiarInputNombre] = useState('');
-	const [inputCorreo, cambiarInputCorreo] = useState('');
-
-	// Funcion que se encargara de validar los datos y enviar el formulario
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		// Comprobamos validacion del formulario ...
-		// Si todo es correcto enviamos el formulario
-
-		console.log('Formulario Enviado!');
-	}
-
-	// Funcion que se encarga de cambiar el estado del inputNombre
-	const handleInputNombre = (e) => {
-		cambiarInputNombre(e.target.value);
-	}
-	
-	// Funcion que se encarga de cambiar el estado del inputCorreo
-	const handleInputCorreo = (e) => {
-		cambiarInputCorreo(e.target.value);
-	}
-
+	const [formularioEnviado, setFormularioEnviado] = useState(false);
 	return (
 		<>
-			<form action="" onSubmit={handleSubmit} className="formulario">
-				<div>
-					<label htmlFor="nombre">Nombre</label>
-					<input
-						type="text"
-						name="nombre"
-						placeholder="Nombre"
-						id="nombre"
-						value={inputNombre}
-						onChange={handleInputNombre}
-					/>
-				</div>
+			<Formik
+				initialValues={{
+					nombre: '',
+					correo: ''
+				}}
+				validate={(valores) => {
+					let errores = {};
 
-				<div>
-					<label htmlFor="correo">Correo</label>
-					<input
-						type="text"
-						name="correo"
-						placeholder="Correo"
-						id="correo"
-						value={inputCorreo}
-						onChange={handleInputCorreo}
-					/>
-				</div>
+					// Validación nombre
+					if (!valores.nombre) {
+						errores.nombre = 'Por favor ingresa un nombre';
+					} else if (!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(valores.nombre)) {
+						errores.nombre = 'El nombre solo debe contener solo letras y espacios';
+					}
 
-				<button type="submit">Enviar</button>
-			</form>
+					// Validación correo
+					if (!valores.correo) {
+						errores.correo = 'Por favor ingresa un correo electronico';
+					} else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(valores.correo)) {
+						errores.correo = 'El correo solo debe contener letras, numeros, puntos, guiones y guiones bajos';
+					}
+
+					return errores;
+				}}
+				onSubmit={(valores, {resetForm}) => {
+					resetForm();
+					console.log('Formulario Enviado');
+					setFormularioEnviado(true);
+					setTimeout(() => setFormularioEnviado(false), 5000);
+				}}
+			>
+				{({ values, errors, touched, handleSubmit, handleChange, handleBlur }) => (
+					<form className='formulario' onSubmit={handleSubmit}>
+						<div>
+							<label htmlFor='nombre'>Nombre</label>
+							<input
+								type='text'
+								id='nombre'
+								name='nombre'
+								placeholder='John Doe'
+								value={values.nombre}
+								onChange={handleChange}
+								onBlur={handleBlur}
+							/>
+							{touched.nombre && errors.nombre && <div className='error'>{errors.nombre}</div>}
+						</div>
+						<div>
+							<label htmlFor='correo'>Correo</label>
+							<input
+								type='text'
+								id='correo'
+								name='correo'
+								placeholder='correo@correo.com'
+								value={values.correo}
+								onChange={handleChange}
+								onBlur={handleBlur}
+							/>
+							{touched.correo && errors.correo && <div className='error'>{errors.correo}</div>}
+						</div>
+						<button type='submit'>Enviar</button>
+						{formularioEnviado && <p className='exito'>Formulario enviado con exito!</p>}
+					</form>
+				)}
+			</Formik>
 		</>
 	);
 }
- 
+
 export default Formulario;
